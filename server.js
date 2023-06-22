@@ -1,25 +1,38 @@
 //Webex Bot Starter - featuring the webex-node-bot-framework - https://www.npmjs.com/package/webex-node-bot-framework
-require('dotenv').config({path: '/.env'});
-var framework = require("webex-node-bot-framework");
-var webhook = require("webex-node-bot-framework/webhook");
-var express = require("express");
-var bodyParser = require("body-parser");
-var app = express();
-app.use(bodyParser.json());
-app.use(express.static("images"));
-const config = {
-  webhookUrl: 'https://b5d7-60-240-54-229.ngrok-free.app',
-  token: 'OWUwMjkyMWEtMWVmYy00MWJiLTlkMzYtOGUzNmM3NzliNmYyNDdiODQ4ZjctYTIz_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f',
-  port: 7001,
+// require('dotenv').config({path: '/.env'});
+// var framework = require("webex-node-bot-framework");
+// var webhook = require("webex-node-bot-framework/webhook");
+// var express = require("express");
+// var bodyParser = require("body-parser");
+// var app = express();
+// app.use(bodyParser.json());
+// app.use(express.static("images"));
+// const config = {
+//   webhookUrl: 'https://b5d7-60-240-54-229.ngrok-free.app',
+//   token: 'OWUwMjkyMWEtMWVmYy00MWJiLTlkMzYtOGUzNmM3NzliNmYyNDdiODQ4ZjctYTIz_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f',
+//   port: 7001,
+// };
+
+// // init framework
+// var framework = new framework(config);
+// framework.start();
+
+// Websocket version
+var Framework = require('webex-node-bot-framework');
+
+// No express server needed when running in websocket mode
+
+// framework options
+var config = {
+  // No webhookUrl, webhookSecret, or port needed
+  token: 'OWUwMjkyMWEtMWVmYy00MWJiLTlkMzYtOGUzNmM3NzliNmYyNDdiODQ4ZjctYTIz_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f'
 };
 
 // init framework
-var framework = new framework(config);
+var framework = new Framework(config);
 framework.start();
-console.log("Starting framework, please wait...");
-
 framework.on("initialized", () => {
-  console.log("framework is all fired up! [Press CTRL-C to quit]");
+  framework.debug("framework is all fired up! [Press CTRL-C to quit]");
 });
 
 // A spawn event is generated when the framework finds a space with your bot in it
@@ -312,7 +325,7 @@ framework.hears('dm someone', (bot, trigger) => {
 }, '**dm someone [webex ID] [optional message]** - ask the bot to send a message to someone with [webex ID] in a 1-1 space; if no message is supplied, the bot will send a hello message');
 
 framework.hears(
-  /db|kb/, 
+  /kb/, 
   (bot, trigger) => {
   if ((trigger.args[0] === "Merakii" && trigger.args.slice(2).join('+') === "") || trigger.args.slice(1).join('+') === "" ) {
     bot.say("Query is empty. Please try again.");
@@ -327,7 +340,54 @@ framework.hears(
     let url = "https://documentation.meraki.com/Special:Search?qid=&fpid=230&fpth=&query="+queries+"&type=wiki";
     bot.say(`Here you go: ${url}`);
   }
-}, '**db|kb [queries]** - ask the bot to search in documentation');
+}, '**kb [queries]** - ask the bot to search in documentation');
+
+framework.hears(
+  /tshoot/, 
+  (bot, trigger) => {
+  if ((trigger.args[0] === "Merakii" && trigger.args.slice(2).join('+') === "") || trigger.args.slice(1).join('+') === "" ) {
+    let base_url = "https://docs.google.com/spreadsheets/d/1QCAEwIiz6eoMAU2FBuIknWYb6yYngmkD/edit#gid=1347589368";
+    bot.say(`Here you go: ${base_url}`);
+  } else {
+    let arg_trim = trigger.args;
+    if (trigger.args[0] === "Merakii") {
+      arg_trim = arg_trim.slice(2);
+    } else {
+      arg_trim = arg_trim.slice(1);
+    }
+    let queries = arg_trim.join(' ').toLowerCase();
+    let url = "https://docs.google.com/spreadsheets/d/1QCAEwIiz6eoMAU2FBuIknWYb6yYngmkD/edit#gid=";
+    let gid = "1347589368";
+    if (queries === "mx") {
+      gid = "651024759";
+    } else if (queries === "ms") {
+      gid = "14412788";
+    } else if (queries === "mr") {
+      gid = "222414308";
+    } else if (queries === "mg") {
+      gid = "638083231";
+    } else if (queries === "mv") {
+      gid = "869427069";
+    } else if (queries === "multi" || queries === "multi-device" || queries === "device") {
+      gid = "579224543";
+    } else if (queries === "nfo") {
+      gid = "592910562";
+    } else if (queries === "eco") {
+      gid = "1149933802";
+    } else if (queries === "custom queires" || queries === "queries" || "sql") {
+      gid = "374889387";
+    } else if (queries === "tcpdump") {
+
+    } else if (queries === "wireshark") {
+
+    } else if (queries === "postgres") {
+
+    } else if (queries === "special url")
+
+    url += gid;
+    bot.say(`Here you go: ${url}`);
+  }
+}, '**tshoot [model | queries]** - ask the bot to send you tshoot commands');
 
 
 /* On mention with unexpected bot command
@@ -353,20 +413,20 @@ framework.hears(
 
 //Server config & housekeeping
 // Health Check
-app.get("/", (req, res) => {
-  res.send(`I'm alive.`);
-});
+// app.get("/", (req, res) => {
+//   res.send(`I'm alive.`);
+// });
 
-app.post("/", webhook(framework));
+// app.post("/", webhook(framework));
 
-var server = app.listen(config.port, () => {
-  framework.debug("framework listening on port %s", config.port);
-});
+// var server = app.listen(config.port, () => {
+//   framework.debug("framework listening on port %s", config.port);
+// });
 
 // gracefully shutdown (ctrl-c)
 process.on("SIGINT", () => {
   framework.debug("stopping...");
-  server.close();
+  //server.close();
   framework.stop().then(() => {
     process.exit();
   });
