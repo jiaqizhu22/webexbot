@@ -45,6 +45,10 @@ framework.on("spawn", (bot, id, actorId) => {
     console.log(
       `While starting up, the framework found our bot in a space called: ${bot.room.title}`
     );
+    //bot.exit();
+    // console.log(
+    //   `Bot has exit ${bot.room.title}`
+    // );
   } else {
     // When actorId is present it means someone added your bot got added to a new space
     // Lets find out more about them..
@@ -302,9 +306,9 @@ framework.hears(
 framework.hears('dm me', (bot, trigger) => {
   let message = "**Hello**";
   if (trigger.args[0] === "Merakii" && trigger.args.slice(3).join(' ') !== "") {
-    message = trigger.args.slice(3).join(' ');
+    message = "From yourself: " + trigger.args.slice(3).join(' ');
   } else if (trigger.args.slice(3).join(' ') !== "") {
-    message = trigger.args.slice(2).join(' ');
+    message = "From yourself: " + trigger.args.slice(2).join(' ');
   }
   // console.log(`I'm gonna send myself a message ${message}`);
   bot.dm(trigger.person.id, 'markdown', message);
@@ -315,10 +319,10 @@ framework.hears('dm someone', (bot, trigger) => {
   let message = "**Hello**";
   let someone = trigger.args[3];
   if (trigger.args[0] === "Merakii" && trigger.args.slice(4).join(' ') !== "") {
-    message = trigger.args.slice(4).join(' ');
+    message = "From " + bot.room.title + ": " + trigger.args.slice(4).join(' ');
   } else if (trigger.args.slice(3).join(' ') !== "") {
     someone = trigger.args[2];
-    message = trigger.args.slice(3).join(' ');
+    message = "From " + bot.room.title + ": " + trigger.args.slice(3).join(' ');
   }
   // console.log(`I'm gonna send ${someone} a message ${message}`);
   bot.dm(someone, 'markdown', message);
@@ -358,32 +362,49 @@ framework.hears(
     let queries = arg_trim.join(' ').toLowerCase();
     let url = "https://docs.google.com/spreadsheets/d/1QCAEwIiz6eoMAU2FBuIknWYb6yYngmkD/edit#gid=";
     let gid = "1347589368";
-    if (queries === "mx") {
-      gid = "651024759";
-    } else if (queries === "ms") {
-      gid = "14412788";
-    } else if (queries === "mr") {
-      gid = "222414308";
-    } else if (queries === "mg") {
-      gid = "638083231";
-    } else if (queries === "mv") {
-      gid = "869427069";
-    } else if (queries === "multi" || queries === "multi-device" || queries === "device") {
-      gid = "579224543";
-    } else if (queries === "nfo") {
-      gid = "592910562";
-    } else if (queries === "eco") {
-      gid = "1149933802";
-    } else if (queries === "custom queires" || queries === "queries" || "sql") {
-      gid = "374889387";
-    } else if (queries === "tcpdump") {
-
-    } else if (queries === "wireshark") {
-
-    } else if (queries === "postgres") {
-
-    } else if (queries === "special url")
-
+    switch (queries) {
+      case "mx":
+      case "security appliance":
+      case "firewall":
+        gid = "651024759";
+      case "ms":
+      case "sw":
+      case "switch":
+        gid = "14412788";
+      case "mr":
+      case "ap":
+      case "access point":
+        gid = "222414308";
+      case "mg":
+        gid = "638083231";
+      case "mv":
+      case "camera":
+        gid = "869427069";
+      case "multi":
+      case "multi-device":
+      case "device":
+        gid = "579224543";
+      case "nfo":
+        gid = "592910562";
+      case "eco":
+        gid = "1149933802";
+      case "custom queires":
+      case "queries":
+      case "sql":
+        gid = "374889387";
+      case "tcpdump":
+        gid = "1434504654";
+      case "wireshark":
+        gid = "1133638410";
+      case "partial postgres schema": 
+      case "postgres":
+      case "schema":
+        gid = "1363926181";
+      case "special url":
+      case "urls":
+      case "url":
+        gid = "1796417142";
+    }
     url += gid;
     bot.say(`Here you go: ${url}`);
   }
