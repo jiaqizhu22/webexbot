@@ -314,7 +314,6 @@ framework.hears('dm me', (bot, trigger) => {
   bot.dm(trigger.person.id, 'markdown', message);
 }, '**dm me [optinal message]** - ask the bot to send a message to you in a 1-1 space');
 
-// Markdown Method 2 - Define message format as part of argument string
 framework.hears('dm someone', (bot, trigger) => {
   let message = "**Hello**";
   let someone = trigger.args[3];
@@ -327,6 +326,28 @@ framework.hears('dm someone', (bot, trigger) => {
   // console.log(`I'm gonna send ${someone} a message ${message}`);
   bot.dm(someone, 'markdown', message);
 }, '**dm someone [webex ID] [optional message]** - ask the bot to send a message to someone with [webex ID] in a 1-1 space; if no message is supplied, the bot will send a hello message');
+
+// Reminder
+framework.hears('remind someone', (bot, trigger) => {
+  let message = "**Hello**";
+  let someone = trigger.args[3];
+  let time = parseInt(trigger.args[4])*1000;
+  if (trigger.args[0] === "Merakii" && trigger.args.slice(5).join(' ') !== "") {
+    message = "From " + bot.room.title + ": " + trigger.args.slice(5).join(' ');
+  } else if (trigger.args.slice(4).join(' ') !== "") {
+    someone = trigger.args[2];
+    time = parseInt(trigger.args[3])*1000;
+    message = "From " + bot.room.title + ": " + trigger.args.slice(4).join(' ');
+  }
+  // console.log(`I'm gonna send ${someone} a message ${message}`);
+  console.log(time);
+  if (someone === "me") {
+    setTimeout(function() { bot.dm(trigger.person.id, 'markdown', message); }, time);
+  } else {
+    setTimeout(function() { bot.dm(someone, 'markdown', message); }, time);
+  }
+}, '**remind someone [webex ID] [time in seconds] [optional message]** - ask the bot to send a message to someone with [webex ID] in a 1-1 space; if no message is supplied, the bot will send a hello message');
+
 
 framework.hears(
   /kb/, 
